@@ -43,3 +43,23 @@ const vailSeq = (arr, seq) =>{
     }
     return idx == seq.length;
 }
+
+/*
+Write a function that takes in non-empty array of intergers that are sorted in ascending order and
+returns a new array of the same length with the squares of te original intergers also sorted in ascending order.
+*/
+
+array = [-4, -1, 5, 6, 8, 10, 22, 25]
+
+const array_sorter = (arr) => {
+     // Write your code here.
+	const len = arr.length;
+	const newArr = [];
+	for (let i =0; i < len - 1; i++) {
+		let newValue = arr[i]**2;
+		newArr.push(newValue);
+	}
+    let sortedArray = newArr.sort(function (a, b) {  return a - b;  });
+  return sortedArray;
+
+}
