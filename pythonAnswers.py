@@ -4,6 +4,8 @@
 # two numbers sum up to the targetSum , the function should return an empty array.
 
 
+from importlib.resources import path
+from typing import OrderedDict
 from numpy import integer
 
 
@@ -54,6 +56,8 @@ def sortedSquaredArray(array):
     return newArray
 
 # Solution B
+
+
 def sortedSquaredArray(array):
     sqrs = [0 for _ in array]
     sml = 0
@@ -136,3 +140,83 @@ class BST:
         self.value = value
         self.left = None
         self.right = None
+
+# Write  function that takes in a Binary Tree and return a list of its branch sums Ordered
+# from leftmost branch to rightmost branch sum.
+# A branch sum is the sum of all values in a Binary Tree branch. A Binary Tree branch is a path
+# of node in a tree that starts at the root node and ends at the leaf node.
+# Each Binary-Tree node has an interger value, a left child node and a right child node.
+# Children node can either be BinaryTree nodes themselves on None/Null.
+
+
+class BinaryTree:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+
+def branchSums(root):
+    sums = []  # Branch sums array
+    clcTotals(root, 0, sums)
+    return sums
+
+
+def clcTotals(node, running_sum, sums):  # calculate Branch Sums
+    if node is None:
+        return
+    new_running_sum = running_sum + node.value
+    if node.left is None and node.right is None:
+        sums.append(new_running_sum)
+        return
+    clcTotals(node.left, new_running_sum, sums)
+    clcTotals(node.right, new_running_sum, sums)
+
+# Node depths
+# Solution A, interative
+
+
+def nodeDepths(root):
+    sumOfDepths = 0
+    stack = [{"node": root, "depth": 0}]
+    while len(stack) > 0:
+        nodeInfo = stack.pop()
+        node, depth = nodeInfo["node"], nodeInfo["depth"]
+        if node is None:
+            continue
+        sumOfDepths += depth
+        stack.append({"node": node.left, "depth": depth + 1})
+        stack.append({"node": node.right, "depth": depth + 1})
+    return sumOfDepths
+
+
+# This is the class of the input binary tree.
+class BinaryTree:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+# Solution B, recussive
+def nodeDepths(root, depth = 0):
+    #Handle base case of recursion
+    if root is None:
+        return 0
+    return depth + nodeDepths(root.left, depth + 1) + nodeDepths(root.right, depth + 1)
+
+
+#Depth-first Search
+class Node:
+    def __init__(self, name):
+        self.children = []
+        self.name = name
+
+    def addChild(self, name):
+        self.children.append(Node(name))
+        return self
+
+    def depthFirstSearch(self, array):
+        array.append(self.name)
+        for child in self.children:
+            child.depthFirstsearch(array)
+        return array
