@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Set
 # Two Number Sum
 # Write a function that takes in a non-empty array of distinct intergers and an integer representing a target sum.
 # If any two numbers in the input array sum up to the target sum, the function should return them in an array, in any order. If no
@@ -228,8 +228,6 @@ class Node:
         return array
 
 # Minimum waiting waiting time
-
-
 def minWaitingTime(queries):
     queries.sort()
     totalWaitingTime = 0
@@ -237,3 +235,16 @@ def minWaitingTime(queries):
         remainingQueries = len(queries) - (idx + 1)
         totalWaitingTime += duration * remainingQueries
     return totalWaitingTime
+    
+#Given a string s, find the length of the longest substring without repeating characters.
+def longestSubString(s: str) -> int:
+    charSet = set()
+    sml = 0
+    total = 0
+    for i in range(len(s)):
+        while s[i] in charSet:
+            charSet.remove(s[sml])
+            sml += 1
+        charSet.add(s[i])
+        total = max(total, i - sml + 1)
+    return total
