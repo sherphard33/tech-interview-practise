@@ -1,19 +1,13 @@
+from typing import List
 # Two Number Sum
 # Write a function that takes in a non-empty array of distinct intergers and an integer representing a target sum.
 # If any two numbers in the input array sum up to the target sum, the function should return them in an array, in any order. If no
 # two numbers sum up to the targetSum , the function should return an empty array.
-
-
-from importlib.resources import path
-from typing import OrderedDict
-from numpy import integer
-
-
 array = [3, 5, -4, 8, 11, 1, 0, 2]
 targetSum = 10
 
 
-def tSumNum(arr, tSum):
+def tSumNum(arr: List[int], tSum: int) -> List[int]:
     length = len(arr)
     for n in range(length):
         num1 = arr[n]
@@ -23,11 +17,23 @@ def tSumNum(arr, tSum):
                 return [num1, num2]
     return []
 
+# Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+# You may assume that each input would have exactly one solution, and you may not use the same element twice.
+# You can return the answer in any order.
 
-print(tSumNum(array, targetSum))
+def twoSum(nums: List[int], target: int) -> List[int]:
+    memo = {}
+    for idx, i in enumerate(nums):
+        num2 = target - nums[idx]
+        if num2 in memo:
+            return [idx, memo[num2]]
+        else:
+            memo[i] = idx
+    return []
 
 # Given two non empty arrays of integers, write a function that determines whether
 # the second array is a subsequence of the first
+
 
 array = [5, 1, 22, 25, 6, -1, 8, 10]
 sequence = [1, 6, -1, 10]
@@ -43,13 +49,11 @@ def fSequence(arr, seq):
             idx += 1
     return idx == len(seq)
 
-
-print(fSequence(array, sequence))
-
-
 # Write a function that takes in non-empty array of intergers that are sorted in ascending order and
 # returns a new array of the same length with the squares of te original intergers also sorted in ascending order.
 # Solution A
+
+
 def sortedSquaredArray(array):
     newArray = [i**2 for i in array]
     newArray.sort()
@@ -198,14 +202,16 @@ class BinaryTree:
         self.right = None
 
 # Solution B, recussive
-def nodeDepths(root, depth = 0):
-    #Handle base case of recursion
+
+
+def nodeDepths(root, depth=0):
+    # Handle base case of recursion
     if root is None:
         return 0
     return depth + nodeDepths(root.left, depth + 1) + nodeDepths(root.right, depth + 1)
 
 
-#Depth-first Search
+# Depth-first Search
 class Node:
     def __init__(self, name):
         self.children = []
@@ -220,3 +226,14 @@ class Node:
         for child in self.children:
             child.depthFirstsearch(array)
         return array
+
+# Minimum waiting waiting time
+
+
+def minWaitingTime(queries):
+    queries.sort()
+    totalWaitingTime = 0
+    for idx, duration in enumerate(queries):
+        remainingQueries = len(queries) - (idx + 1)
+        totalWaitingTime += duration * remainingQueries
+    return totalWaitingTime
