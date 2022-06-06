@@ -1,4 +1,7 @@
-from typing import List, Set
+from typing import List
+import ast
+import builtins
+from pprint import pprint
 # Two Number Sum
 # Write a function that takes in a non-empty array of distinct intergers and an integer representing a target sum.
 # If any two numbers in the input array sum up to the target sum, the function should return them in an array, in any order. If no
@@ -237,6 +240,7 @@ def minWaitingTime(queries):
     return totalWaitingTime
     
 #Given a string s, find the length of the longest substring without repeating characters.
+s = 'abcabcbb'
 def longestSubString(s: str) -> int:
     charSet = set()
     sml = 0
@@ -248,3 +252,92 @@ def longestSubString(s: str) -> int:
         charSet.add(s[i])
         total = max(total, i - sml + 1)
     return total
+
+# You're given two input arrays: onecontaining the heights of all the students with red shirts 
+# and another one containing the heights of all the students with blue shirts. These arrays will always 
+# have the same length, and each height will be a positive integer. Write a function that return weather or not
+# a class photo that follows the stated guidelines can be taken. 
+#Note: you can assume that each class has at least 2 students.
+redShirtsHeights = [5,8,1,3,4]
+blueShirtHeights = [6,9,2,4,5]
+
+def classPhotos(redShirtHeights, blueShirtHeights):
+    redShirtHeights.sort(reverse=True)
+    blueShirtHeights.sort(reverse=True)
+    shirtColorInFirstRow = 'RED' if redShirtHeights[0] < blueShirtHeights[0] else 'BLUE'
+    for idx in range(len(redShirtHeights)):
+        redShirtHeight = redShirtHeights[idx]
+        blueShirtHeight = blueShirtHeights[idx]
+
+        if shirtColorInFirstRow == 'RED':
+            if redShirtHeight >= blueShirtHeight:
+                return False 
+        else:
+            if blueShirtHeight >= redShirtHeight:
+                return False
+    return False
+
+
+#Using AST module
+
+src2 = """
+next,dir,list,dir = 1,2,3,"bin = 4"
+str = 45
+"""
+def find_value_of(source, target):
+  mod_ast = ast.parse(source)  
+  assert isinstance(mod_ast, ast.Module), type(mod_ast)
+  for node in mod_ast.body:
+    if isinstance(node, ast.Assign):
+      if (len(node.targets) == 1 and
+          isinstance(node.targets[0], ast.Name) and
+          node.targets[0].id == target):
+        return node.targets[0].id
+  return None, None
+
+print(find_value_of(src2, 'str'))
+
+
+
+src = """
+def list(str, foo, iter): 
+    def bin(set): 
+        dict = 42 
+        foo = zip
+        bar = 0
+    return str[::-1]
+"""
+builtin_types = tuple(getattr(builtins, t) for t in dir(builtins) if isinstance(getattr(builtins, t), type))
+#print(isinstance(int, builtin_types))
+#Visit Assign class to get all variables in the source
+class Analyzer(ast.NodeVisitor):
+    def __init__(self):
+        self.stats = []
+
+    def visit_Assign(self, node):
+        new_list = []
+        for alias in node.targets:
+            self.stats.append(alias.id)
+        self.generic_visit(node)
+        
+
+    def report(self):
+        return self.stats
+
+#Helper function to get variable in source
+def getVariables(source):
+    tree = ast.parse(source)
+    analyzer = Analyzer()
+    analyzer.visit(tree)
+    return analyzer.report()
+
+arr1 = ['str', 'bool', 'next']
+arr2 = ['str', 'next']
+
+source_assignments =  getVariables(src)
+print(source_assignments)
+# def cheVar(a1, a2):
+#     for v in a1:
+#         if v in a2:
+#             print(v)
+# cheVar(arr1, arr2)
