@@ -1,4 +1,4 @@
-from typing import List
+from typing import Counter, Dict, List
 import ast
 import builtins
 from pprint import pprint
@@ -6,58 +6,145 @@ from pprint import pprint
 # Write a function that takes in a non-empty array of distinct intergers and an integer representing a target sum.
 # If any two numbers in the input array sum up to the target sum, the function should return them in an array, in any order. If no
 # two numbers sum up to the targetSum , the function should return an empty array.
-array = [3, 5, -4, 8, 11, 1, 0, 2]
+arrayN = [3, 5, -4, 8, 11, 1, 0, 2]
 targetSum = 10
 
 
-def tSumNum(arr: List[int], tSum: int) -> List[int]:
+def twoSumA(arr: List[int], tSum: int) -> List[int]:
     length = len(arr)
-    for n in range(length):
-        num1 = arr[n]
-        for j in range(num1 + 1, length):
+    for idx, n in enumerate(arr):
+        for j in range(idx + 1, length):
             num2 = arr[j]
-            if num1 + num2 == tSum:
-                return [num1, num2]
+            if n + num2 == tSum:
+                return [n, num2]
     return []
 
 # Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 # You may assume that each input would have exactly one solution, and you may not use the same element twice.
 # You can return the answer in any order.
-
-def twoSum(nums: List[int], target: int) -> List[int]:
+def twoSumB(nums: List[int], target: int) -> List[int]:
     memo = {}
     for idx, i in enumerate(nums):
-        num2 = target - nums[idx]
+        num2 = target - i
         if num2 in memo:
             return [idx, memo[num2]]
         else:
             memo[i] = idx
     return []
+# print(twoSum(arrayN, targetSum))
 
+# Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order, find two numbers such that they add up 
+# to a specific target number. Let these two numbers be numbers[index1] and numbers[index2] where 1 <= index1 < index2 <= numbers.length.
+# Return the indices of the two numbers, index1 and index2, added by one as an integer array [index1, index2] of length 2.
+# The tests are generated such that there is exactly one solution. You may not use the same element twice.
+# Your solution must use only constant extra space.
+def twoSumII(numbers: List[int], target: int) -> List[int]:
+        l, r = 0, len(numbers) - 1
+        while l < r:
+            curSum = numbers[l] + numbers[r]
+            if curSum > target:
+                r -= 1
+            elif curSum < target:
+                l += 1
+            else:
+                return [l + 1, r + 1]
+
+# Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
+# Notice that the solution set must not contain duplicate triplets.
+def threeSum(nums: List[int]) -> List[List[int]]:
+        res = []
+        nums.sort()
+        for i, a in enumerate(nums):
+            if i > 0 and a == nums[i - 1]:
+                continue
+            
+            l, r = i + 1, len(nums) - 1
+            while l < r:
+                threeSum = a + nums[l] + nums[r]
+                if threeSum > 0:
+                    r -= 1
+                elif threeSum < 0:
+                    l += 1
+                else:
+                    res.append([a, nums[l], nums[r]])
+                    l += 1
+                    while nums[l] == nums[l - 1] and l < r:
+                        l += 1
+        return res
 # Given two non empty arrays of integers, write a function that determines whether
 # the second array is a subsequence of the first
 
 
 array = [5, 1, 22, 25, 6, -1, 8, 10]
-sequence = [1, 6, -1, 10]
+sequence = [2, 6, -1, 10]
 
 
 def fSequence(arr, seq):
-    idx = 0
-    length = len(arr)
-    for i in arr:
-        if idx == len(seq):
+    sCount = 0
+    for n in arr:
+        if sCount == len(seq):
             return True
-        if i == seq[idx]:
-            idx += 1
-    return idx == len(seq)
+        if n == seq[sCount]:
+            sCount += 1
+    return sCount == len(seq)
+# print(fSequence(array, sequence))
+
+
+# Check if 2nd string is an anogram(contains the same letters in a diffrent order)
+def isAnagram(s, t):
+        # return Counter(s) == Counter(t) #makes the comparison in one line
+        # check if they are same length first
+        if len(s) != len(t):
+            return False
+        # create hashMaps to store number of occurance
+        countS, countT = {}, {}
+        # Loop through the range-length of one since they are the same length
+        for idx, n in enumerate(s):
+            # store number of occurece, using .Get() checks if a key already exists first
+            countS[n] = 1 + countS.get(n, 0)
+            # store number of occurece, using .Get() checks if a key already exists first
+            countT[t[idx]] = 1 + countT.get(t[idx], 0)
+        for c in countS:
+            if countS[c] != countT.get(c, 0):  # compare key counts
+                return False
+        return True
+
+
+s = 'ated'
+t = 'tea'
+# print(isAnagram(s, t))
+# Group anagrams and return in an array
+
+
+def groupAnagrams(strs: List[str]) -> List[List[str]]:
+        result = {}
+        for string in strs:
+            # sort the string and join letters
+            sorted_string = "".join(sorted(string))
+            # use one line to check if key already exists in the dic result
+            result.setdefault(sorted_string, []).append(string)
+            # if result.get(sorted_string):
+            #     result[sorted_string].append(string)
+            #     #print(result[sorted_string])
+            # else:
+            #     result[sorted_string] = [string]
+        return [el for el in result.values()]
+
+
+def checkAnog(s, t):
+    return Counter(s) == Counter(t)
+
+
+strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+# print(groupAnagrams(strs = strs))
+
 
 # Write a function that takes in non-empty array of intergers that are sorted in ascending order and
 # returns a new array of the same length with the squares of te original intergers also sorted in ascending order.
 # Solution A
 
 
-def sortedSquaredArray(array):
+def sortedSquaredArrayA(array):
     newArray = [i**2 for i in array]
     newArray.sort()
     return newArray
@@ -65,7 +152,7 @@ def sortedSquaredArray(array):
 # Solution B
 
 
-def sortedSquaredArray(array):
+def sortedSquaredArrayB(array):
     sqrs = [0 for _ in array]
     sml = 0
     lrg = len(array) - 1
@@ -78,9 +165,146 @@ def sortedSquaredArray(array):
         else:
             sqrs[idx] = lrgV**2
             lrg -= 1
-    return sqrs
+        return sqrs
+        
+#print(sortedSquaredArrayB(array))
+# Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.
+def topKFrequent(nums: List[int], k: int) -> List[int]:
+    count = {}
+    sButcket = [[] for _ in range(len(nums) + 1)]
+    for i in nums:
+        count[i] = 1 + count.get(i, 0)
+    for key, n in count.items():
+        sButcket[n].append(key)
+    res = []
+    print(sButcket)
+    for el in range(len(sButcket) - 1, 0, -1):
+        for c in sButcket[el]:
+                res.append(c)
+                if len(res) == k:
+                    return res
+
+# nums = [2,2,2,3,1,1,4,4,4,]
+# k = 2
+
+# Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].
+# The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+# You must write an algorithm that runs in O(n) time and without using the division operation.
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        N = len(nums)
+        res = [1] * N
+        
+        prefix = 1
+        for i in range(N-1):
+            prefix = prefix * nums[i]
+            res[i+1] = prefix
+        
+        postfix = 1
+        for i in range(N-1,-1,-1):
+            res[i] *= postfix
+            postfix = postfix * nums[i]
+            
+        return res
+numz = [1,2,3,4]
+
+# Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and is decoded back to the original list of strings.
+# Please implement encode and decode
+class Solution:
+    """
+    @param: strs: a list of strings
+    @return: encodes a list of strings to a single string.
+    """
+    def encode(self, strs):
+        res = ""
+        for s in strs:
+            res += str(len(s)) + "#" + s
+        return res
+
+    """
+    @param: str: A string
+    @return: dcodes a single string to a list of strings
+    """
+    def decode(self, str):
+        res, i = [], 0
+
+        while i < len(str):
+            j = i
+            while str[j] != "#":
+                j += 1
+            length = int(str[i:j])
+            res.append(str[j + 1 : j + 1 + length])
+            i = j + 1 + length
+        return res
+
+# Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.
+# You must write an algorithm that runs in O(n) time.
+def longestConsecutive(nums: List[int]) -> int:
+        numSet = set(nums)
+        longest = 0
+        for n in nums:
+            # check if its the start of a sequence
+            if (n - 1) not in numSet:
+                length = 1
+                while (n + length) in numSet:
+                    length += 1
+                longest = max(length, longest)
+        return longest
+
+#Given a string s, find the length of the longest substring without repeating characters.
+# def lengthOfLongestSubstring(s: str) -> int:
+#         charSet = set()
+#         sml = 0
+#         total = 0
+#         for i in range(len(s)):
+#             while s[i] in charSet:
+#                 charSet.remove(s[sml])
+#                 sml += 1
+#             charSet.add(s[i])
+#             total = max(total, i - sml + 1)
+#         return total
+# Given a string s, find the length of the longest substring without repeating characters.
+s = 'abcabcbb'
+def longestSubString(s: str) -> int:
+    charSet = set()
+    sml = 0
+    total = 0
+    for i in range(len(s)):
+        while s[i] in charSet:
+            charSet.remove(s[sml])
+            sml += 1
+        charSet.add(s[i])
+        total = max(total, i - sml + 1)
+    return total
+
+#Valid Palindrome
+# A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward.
+# Alphanumeric characters include letters and numbers.
+# Given a string s, return true if it is a palindrome, or false otherwise.
+def isPalindrome(s: str):
+    sml = 0
+    newS = ""
+    if s == "":
+        return True
+    for c in s:
+        if c.isalnum():
+            newS += c.lower()
+    lrg = len(newS) - 1
+    for n in range(len(newS)):
+        smaV = newS[sml]
+        lrgV = newS[lrg]
+        print(smaV, lrgV)
+        if smaV == lrgV:
+            sml += 1
+            lrg -= 1
+        else:
+            return False
+        
+    return True
 
 
+s = "A man, a plan, a canal :Panama"
+print(isPalindrome(s))
 # There's an algorithm tournament taking place in which teams of programmers compete againist each other to solve
 # algorithmic problems as fast as possible. Temas compete in a round robin, where each team faces off aganist all other teams.
 # only two teams compete against each other at a time, and for each competition, one team is designated the home team, while the other
@@ -110,18 +334,30 @@ def tournamentWinner(competitions, results):
     return cBestTeam
 
 
-def update(team, scores):
+def update(team, scores: Dict):
     if team not in scores:
         scores[team] = 0
     scores[team] += 3
+
+# You are given an array prices where prices[i] is the price of a given stock on the ith day.
+# You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
+# Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
+def maxProfit(prices: List[int]) -> int:
+        res = 0
+        l = 0
+        for r in range(1, len(prices)):
+            if prices[r] < prices[l]:
+                l = r
+            res = max(res, prices[r] - prices[l])
+        return res
+
+
 
 # Write a function that takes in a Binary search Tree(BST) and a target interger value and returns
 # the closest value to that target value contained in the BST.
 # You can assume that there will only be one closest value.
 # Each BST node has an integer value, a left child node, and a right child node. A
 # node is said to be a valid BST node if and only if it satisfies the BST property: its value is stricly
-#
-
 
 def findClosestValueInBst(tree, target):
     return helperfnct(tree, target, float("inf"))
@@ -239,25 +475,13 @@ def minWaitingTime(queries):
         totalWaitingTime += duration * remainingQueries
     return totalWaitingTime
     
-#Given a string s, find the length of the longest substring without repeating characters.
-s = 'abcabcbb'
-def longestSubString(s: str) -> int:
-    charSet = set()
-    sml = 0
-    total = 0
-    for i in range(len(s)):
-        while s[i] in charSet:
-            charSet.remove(s[sml])
-            sml += 1
-        charSet.add(s[i])
-        total = max(total, i - sml + 1)
-    return total
+
 
 # You're given two input arrays: onecontaining the heights of all the students with red shirts 
 # and another one containing the heights of all the students with blue shirts. These arrays will always 
 # have the same length, and each height will be a positive integer. Write a function that return weather or not
 # a class photo that follows the stated guidelines can be taken. 
-#Note: you can assume that each class has at least 2 students.
+# Note: you can assume that each class has at least 2 students.
 redShirtsHeights = [5,8,1,3,4]
 blueShirtHeights = [6,9,2,4,5]
 
@@ -275,10 +499,10 @@ def classPhotos(redShirtHeights, blueShirtHeights):
         else:
             if blueShirtHeight >= redShirtHeight:
                 return False
-    return False
+    return True
 
 
-#Using AST module
+# Using AST module
 
 src2 = """
 next,dir,list,dir = 1,2,3,"bin = 4"
@@ -295,7 +519,7 @@ def find_value_of(source, target):
         return node.targets[0].id
   return None, None
 
-print(find_value_of(src2, 'str'))
+# print(find_value_of(src2, 'str'))
 
 
 
@@ -308,8 +532,8 @@ def list(str, foo, iter):
     return str[::-1]
 """
 builtin_types = tuple(getattr(builtins, t) for t in dir(builtins) if isinstance(getattr(builtins, t), type))
-#print(isinstance(int, builtin_types))
-#Visit Assign class to get all variables in the source
+# print(isinstance(int, builtin_types))
+# Visit Assign class to get all variables in the source
 class Analyzer(ast.NodeVisitor):
     def __init__(self):
         self.stats = []
@@ -324,7 +548,7 @@ class Analyzer(ast.NodeVisitor):
     def report(self):
         return self.stats
 
-#Helper function to get variable in source
+# Helper function to get variable in source
 def getVariables(source):
     tree = ast.parse(source)
     analyzer = Analyzer()
@@ -334,10 +558,28 @@ def getVariables(source):
 arr1 = ['str', 'bool', 'next']
 arr2 = ['str', 'next']
 
-source_assignments =  getVariables(src)
-print(source_assignments)
+# source_assignments =  getVariables(src)
+# print(source_assignments)
 # def cheVar(a1, a2):
 #     for v in a1:
 #         if v in a2:
 #             print(v)
 # cheVar(arr1, arr2)
+
+# Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+# An input string is valid if:
+# Open brackets must be closed by the same type of brackets.
+# Open brackets must be closed in the correct order.
+def isValid(s: str) -> bool:
+        Map = { ")":"(", "]":"[", "}":"{" }
+        stack = []
+        
+        for c in s:
+            if c not in Map:
+                stack.append(c)
+                continue    
+            if not stack or stack[-1] != Map[c]:
+                return False
+            stack.pop()
+            
+        return not stack
